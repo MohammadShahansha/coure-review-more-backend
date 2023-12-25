@@ -5,6 +5,7 @@ import {
   updateCourseValidationSchema,
 } from './course.zod.validation';
 import validateRequest from '../../middlewares/validateRequest';
+import auth from '../../middlewares/auth';
 const router = express.Router();
 
 router.post(
@@ -12,7 +13,7 @@ router.post(
   validateRequest(courseValidationSchema),
   courseController.createCourse,
 );
-router.get('/courses', courseController.getAllCourse);
+router.get('/courses', auth(), courseController.getAllCourse);
 router.put(
   '/courses/:courseId',
   validateRequest(updateCourseValidationSchema),

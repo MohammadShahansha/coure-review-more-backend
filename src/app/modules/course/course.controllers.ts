@@ -31,28 +31,21 @@ const createCourse = catchAsync(async (req, res, next) => {
   });
 });
 
-const getAllCourse = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await courseServices.getAllCourseFromDB(req.query);
-    res.status(200).json({
-      success: true,
-      statuCode: 200,
-      message: 'Courses retrieved successfully',
-      meta: {
-        page: Number(req.query?.page) || 1,
-        limit: Number(req.query?.limit) || 10,
-        total: result.length,
-      },
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+const getAllCourse = catchAsync(async (req, res, next) => {
+  console.log(req.user);
+  const result = await courseServices.getAllCourseFromDB(req.query);
+  res.status(200).json({
+    success: true,
+    statuCode: 200,
+    message: 'Courses retrieved successfully',
+    meta: {
+      page: Number(req.query?.page) || 1,
+      limit: Number(req.query?.limit) || 10,
+      total: result.length,
+    },
+    data: result,
+  });
+});
 
 const updateCourse = async (
   req: Request,
