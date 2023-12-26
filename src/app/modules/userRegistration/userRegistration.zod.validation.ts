@@ -6,5 +6,13 @@ export const createUserRegistrationValidationSchema = z.object({
     email: z.string(),
     password: z.string(),
     role: z.enum(['user', 'admin']),
+    passwordStor: z
+      .array(
+        z.object({
+          password: z.string(),
+          timeStamp: z.date(),
+        }),
+      )
+      .optional(),
   }),
 });

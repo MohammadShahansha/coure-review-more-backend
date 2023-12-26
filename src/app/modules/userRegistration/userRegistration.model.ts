@@ -23,6 +23,7 @@ const userRegistrationSchema = new Schema<TUserRegistration, UserRegisterModel>(
     password: {
       type: String,
       required: true,
+      // select: false,
     },
     role: {
       type: String,
@@ -30,6 +31,17 @@ const userRegistrationSchema = new Schema<TUserRegistration, UserRegisterModel>(
       required: true,
       default: 'user',
     },
+    passwordStore: [
+      {
+        password: {
+          type: String,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -62,6 +74,25 @@ userRegistrationSchema.statics.isPasswordMatch = async function (
   hashedPassword,
 ) {
   return await bcrypt.compare(plainPassword, hashedPassword);
+};
+
+userRegistrationSchema.statics.storePassword = async function (
+  email: string,
+  password: string,
+  timestamp: Date,
+) {
+  const user = await this.findOne({ email });
+
+  console.log('user:', user);
+  if (user) {
+    user.passwordStore = user?.passwordStore || [];
+    user?.passwordStore?.unshift({ password, timestamp });
+  }
+  const passwordStorLength = Number(user?.passwordStore?.length);
+  if (passwordStorLength > 3) {
+    user?.passwordStore?.pop();
+  }
+  await user?.save();
 };
 export const UserRegistration = model<TUserRegistration, UserRegisterModel>(
   'UserRegistration',

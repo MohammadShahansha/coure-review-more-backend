@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import catchAsync from '../../utils/catchAsinc';
 import { userRegistrationService } from './userRegistration.services';
+
 const createUserRegistration = catchAsync(async (req, res, next) => {
   const result = await userRegistrationService.createUserRegistrationIntoDB(
     req.body,
@@ -9,7 +10,7 @@ const createUserRegistration = catchAsync(async (req, res, next) => {
   res.status(201).json({
     success: true,
     statusCode: 201,
-    message: 'Category created successfully',
+    message: 'User registered successfully',
     data: result,
   });
 });

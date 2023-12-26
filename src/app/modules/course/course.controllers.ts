@@ -38,7 +38,6 @@ const createCourse = catchAsync(async (req, res, next) => {
 });
 
 const getAllCourse = catchAsync(async (req, res, next) => {
-  console.log(req.user);
   const result = await courseServices.getAllCourseFromDB(req.query);
   res.status(200).json({
     success: true,
