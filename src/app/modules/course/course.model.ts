@@ -62,6 +62,10 @@ const CourseSchema = new Schema<TCourse>({
       required: true,
     },
   },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'UserRegistration',
+  },
 });
 
 export const Course = model<TCourse>('Course', CourseSchema);

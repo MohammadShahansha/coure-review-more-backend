@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsinc';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
+import { TUserRole } from '../modules/auth/auth.constant';
 
-const auth = () => {
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
     if (!token) {
@@ -17,6 +18,11 @@ const auth = () => {
         if (err) {
           throw new Error('you are not authorize');
         }
+        const role = (decoded as JwtPayload)?.role;
+        if (requiredRoles && !requiredRoles.includes(role)) {
+          throw new Error('you are not authorize');
+        }
+
         req.user = decoded as JwtPayload;
       },
     );

@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.post(
   '/course',
+  auth('admin'),
   validateRequest(courseValidationSchema),
   courseController.createCourse,
 );

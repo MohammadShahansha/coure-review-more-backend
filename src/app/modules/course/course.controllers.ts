@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { courseValidationSchema } from './course.zod.validation';
 import { courseServices } from './course.service';
 import catchAsync from '../../utils/catchAsinc';
+import { UserRegistration } from '../userRegistration/userRegistration.model';
 
 const calculateWeeksDuration = (startDate: string, endDate: string): number => {
   const startTime = Date.parse(startDate);
@@ -13,14 +14,19 @@ const calculateWeeksDuration = (startDate: string, endDate: string): number => {
 };
 const createCourse = catchAsync(async (req, res, next) => {
   // const zodParseData = courseValidationSchema.parse(req.body);
+  const userInfo = req.user;
   const courseData = req.body;
   const durationInWeeks = calculateWeeksDuration(
     courseData.startDate,
     courseData.endDate,
   );
+  const findCreator = await UserRegistration.findOne({
+    username: userInfo?.username,
+  });
   const courseWithWeeks = {
     ...courseData,
     durationInWeeks,
+    createdBy: findCreator,
   };
   const result = await courseServices.createCourseIntoDB(courseWithWeeks);
   res.status(200).json({

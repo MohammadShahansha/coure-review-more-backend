@@ -21,6 +21,7 @@ export const courseValidationSchema = z.object({
       level: z.enum(['Beginner', 'Intermediate', 'Advanced']),
       description: z.string(),
     }),
+    createdBy: z.string().optional(),
   }),
 });
 
@@ -48,6 +49,7 @@ export const updateCourseValidationSchema = z.object({
       description: z.string(),
     })
     .optional(),
+  createdBy: z.string().optional(),
 });
 export const courseValidatons = {
   courseValidationSchema,
