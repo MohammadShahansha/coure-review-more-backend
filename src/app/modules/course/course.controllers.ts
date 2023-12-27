@@ -55,28 +55,22 @@ const getAllCourse = catchAsync(async (req, res, next) => {
   });
 });
 
-const updateCourse = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { courseId } = req.params;
-    const courseData = req.body;
-    const result = await courseServices.updateCourseFromDB(
-      courseId,
-      courseData,
-    );
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'Course updated successfully',
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+const updateCourse = catchAsync(async (req, res, next) => {
+  const userInfo = req.user;
+  const { courseId } = req.params;
+  const courseData = req.body;
+  const result = await courseServices.updateCourseFromDB(
+    courseId,
+    courseData,
+    userInfo,
+  );
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'Course updated successfully',
+    data: result,
+  });
+});
 
 //get all review and related data
 const getAllReviewWithCourse = async (

@@ -1,20 +1,29 @@
 import { Schema, model } from 'mongoose';
 import { TReview } from './review.interface';
 
-const ReviewSchema = new Schema<TReview>({
-  courseId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Course',
-    required: true,
+const ReviewSchema = new Schema<TReview>(
+  {
+    courseId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Course',
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+    },
+    review: {
+      type: String,
+      required: true,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'UserRegistration',
+    },
   },
-  rating: {
-    type: Number,
-    required: true,
+  {
+    timestamps: true,
   },
-  review: {
-    type: String,
-    required: true,
-  },
-});
+);
 
 export const Review = model<TReview>('Review', ReviewSchema);
