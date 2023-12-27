@@ -21,14 +21,17 @@ const createCourse = catchAsync(async (req, res, next) => {
     courseData.endDate,
   );
   const findCreator = await UserRegistration.findOne({
-    username: userInfo?.username,
+    email: userInfo?.email,
   });
   const courseWithWeeks = {
     ...courseData,
     durationInWeeks,
     createdBy: findCreator,
   };
-  const result = await courseServices.createCourseIntoDB(courseWithWeeks);
+  const result = await courseServices.createCourseIntoDB(
+    courseWithWeeks,
+    userInfo,
+  );
   res.status(200).json({
     success: true,
     statusCode: 201,

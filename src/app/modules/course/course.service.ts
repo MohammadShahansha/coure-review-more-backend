@@ -8,14 +8,21 @@ import sort from '../../queryHelpers/sortQuery';
 import paginate from '../../queryHelpers/paginateQuery';
 import field from '../../queryHelpers/fieldQuery';
 import { Review } from '../review/review.model';
+import { JwtPayload } from 'jsonwebtoken';
 
-const createCourseIntoDB = async (course: TCourse) => {
+const createCourseIntoDB = async (course: TCourse, userInfo: JwtPayload) => {
+  const role = userInfo?.role;
+  if (role !== 'admin') {
+    throw new Error('you are not authorized');
+  }
   const result = await Course.create(course);
   return result;
 };
 
 const getAllCourseFromDB = async (query: any) => {
-  const filterQuery = filter(Course.find(), query);
+  const filterQuery = filter(Course.find(), query)
+    .populate('createdBy')
+    .select('-password');
   const sortQuery = sort(filterQuery, query);
   const paginateQuery = paginate(sortQuery, query);
   const selectedFieldQuery = field(paginateQuery, query);

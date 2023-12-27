@@ -3,6 +3,8 @@ import { UserRegistration } from '../userRegistration/userRegistration.model';
 import { TLoginUser } from './auth.interface';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import AppError from '../../errors/appErrors';
+import httpStatus from 'http-status';
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await UserRegistration.isUserExistByUsername(payload?.username);
@@ -44,7 +46,7 @@ const changedPassword = async (
   const user = await UserRegistration.findOne({
     email: userData?.email,
   }).select('+password');
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     throw new Error('user not exist ');
@@ -59,36 +61,25 @@ const changedPassword = async (
     throw new Error('password not matched');
   }
 
-  if (
-    user?.passwordStore?.map((pass) =>
-      bcrypt.compare(payload?.newPassword, pass.password),
-    )
-  ) {
-    throw new Error('not use old password');
-  }
-  const currHashedPassword = await bcrypt.hash(
-    payload.currentPassword,
-    Number(config.bcrypt_salt_round),
-  );
+  // const currHashedPassword = await bcrypt.hash(
+  //   payload.currentPassword,
+  //   Number(config.bcrypt_salt_round),
+  // );
 
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_round),
   );
   // console.log(userData);
-  await UserRegistration.storePassword(
-    user.email,
-    currHashedPassword,
-    new Date(),
-  );
+  await UserRegistration.storePassword(user.email, user.password, new Date());
 
-  // if (
-  //   user?.passwordStore?.map((pass) =>
-  //     bcrypt.compare(newHashedPassword, pass.password),
-  //   )
-  // ) {
-  //   throw new Error('not use old password');
-  // }
+  user?.passwordStore?.forEach(async (pass) => {
+    const result = await bcrypt.compare(payload.newPassword, pass.password);
+    console.log(result);
+    if (result) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'dont use old pass');
+    }
+  });
 
   const result = await UserRegistration.findOneAndUpdate(
     {

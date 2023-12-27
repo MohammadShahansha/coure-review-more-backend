@@ -20,7 +20,8 @@ export interface UserRegisterModel extends Model<TUserRegistration> {
   ): Promise<boolean>;
   storePassword(
     email: string,
-    password: string,
+    carPassword: string,
+    // newPassword: string,
     timestamp: Date,
-  ): Promise<void>;
+  ): Promise<boolean>;
 }

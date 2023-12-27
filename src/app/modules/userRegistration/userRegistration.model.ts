@@ -83,7 +83,7 @@ userRegistrationSchema.statics.storePassword = async function (
 ) {
   const user = await this.findOne({ email });
 
-  console.log('user:', user);
+  // console.log('user:', user);
   if (user) {
     user.passwordStore = user?.passwordStore || [];
     user?.passwordStore?.unshift({ password, timestamp });
@@ -94,6 +94,7 @@ userRegistrationSchema.statics.storePassword = async function (
   }
   await user?.save();
 };
+
 export const UserRegistration = model<TUserRegistration, UserRegisterModel>(
   'UserRegistration',
   userRegistrationSchema,
