@@ -68,14 +68,6 @@ userRegistrationSchema.statics.isUserExistByUsername = async function (
     username,
   });
 };
-
-userRegistrationSchema.statics.isPasswordMatch = async function (
-  plainPassword,
-  hashedPassword,
-) {
-  return await bcrypt.compare(plainPassword, hashedPassword);
-};
-
 userRegistrationSchema.statics.storePassword = async function (
   email: string,
   password: string,
@@ -86,13 +78,24 @@ userRegistrationSchema.statics.storePassword = async function (
   // console.log('user:', user);
   if (user) {
     user.passwordStore = user?.passwordStore || [];
+    user.passwordStore = user.passwordStore.filter(
+      (entry) => entry.password !== password,
+    );
     user?.passwordStore?.unshift({ password, timestamp });
+    user.passwordStore = user.passwordStore.slice(0, 3);
+    await user?.save();
   }
-  const passwordStorLength = Number(user?.passwordStore?.length);
-  if (passwordStorLength > 3) {
-    user?.passwordStore?.pop();
-  }
-  await user?.save();
+  // const passwordStorLength = Number(user?.passwordStore?.length);
+  // if (passwordStorLength > 3) {
+  //   user?.passwordStore?.pop();
+  // }
+};
+
+userRegistrationSchema.statics.isPasswordMatch = async function (
+  plainPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
 export const UserRegistration = model<TUserRegistration, UserRegisterModel>(

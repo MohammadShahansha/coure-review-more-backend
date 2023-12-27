@@ -52,6 +52,24 @@ const changedPassword = async (
     throw new Error('user not exist ');
   }
 
+  // console.log(userData);
+  await UserRegistration.storePassword(user.email, user.password, new Date());
+
+  // user?.passwordStore?.forEach(async (pass) => {
+  //   const result = await bcrypt.compare(payload.newPassword, pass.password);
+  //   console.log(result);
+  //   if (result) {
+  //     throw new AppError(httpStatus.BAD_REQUEST, 'dont use old pass');
+  //   }
+  // });
+  for (const pass of user?.passwordStore || []) {
+    const result = await bcrypt.compare(payload.newPassword, pass.password);
+    console.log(result);
+    if (result) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Do not use old password');
+    }
+  }
+
   if (
     !(await UserRegistration.isPasswordMatch(
       payload?.currentPassword,
@@ -70,16 +88,6 @@ const changedPassword = async (
     payload.newPassword,
     Number(config.bcrypt_salt_round),
   );
-  // console.log(userData);
-  await UserRegistration.storePassword(user.email, user.password, new Date());
-
-  user?.passwordStore?.forEach(async (pass) => {
-    const result = await bcrypt.compare(payload.newPassword, pass.password);
-    console.log(result);
-    if (result) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'dont use old pass');
-    }
-  });
 
   const result = await UserRegistration.findOneAndUpdate(
     {
