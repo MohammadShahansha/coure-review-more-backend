@@ -53,15 +53,14 @@ const changedPassword = async (
   }
 
   // console.log(userData);
+  const isPasswordMatch = await UserRegistration.isPasswordMatch(
+    payload?.currentPassword,
+    user.password,
+  );
+  if (!isPasswordMatch) {
+    throw new Error('password not matched');
+  }
   await UserRegistration.storePassword(user.email, user.password, new Date());
-
-  // user?.passwordStore?.forEach(async (pass) => {
-  //   const result = await bcrypt.compare(payload.newPassword, pass.password);
-  //   console.log(result);
-  //   if (result) {
-  //     throw new AppError(httpStatus.BAD_REQUEST, 'dont use old pass');
-  //   }
-  // });
   for (const pass of user?.passwordStore || []) {
     const result = await bcrypt.compare(payload.newPassword, pass.password);
     console.log(result);
@@ -69,21 +68,6 @@ const changedPassword = async (
       throw new AppError(httpStatus.BAD_REQUEST, 'Do not use old password');
     }
   }
-
-  if (
-    !(await UserRegistration.isPasswordMatch(
-      payload?.currentPassword,
-      user.password,
-    ))
-  ) {
-    throw new Error('password not matched');
-  }
-
-  // const currHashedPassword = await bcrypt.hash(
-  //   payload.currentPassword,
-  //   Number(config.bcrypt_salt_round),
-  // );
-
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_round),
@@ -97,6 +81,7 @@ const changedPassword = async (
     {
       password: newHashedPassword,
     },
+    { new: true },
   );
   return result;
 };
