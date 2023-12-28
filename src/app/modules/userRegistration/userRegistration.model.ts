@@ -13,14 +13,17 @@ const userRegistrationSchema = new Schema<TUserRegistration, UserRegisterModel>(
     username: {
       type: String,
       required: true,
+      // unique: true,
     },
     email: {
       type: String,
       required: true,
+      // unique: true,
     },
     password: {
       type: String,
       required: true,
+      // select: false,
     },
     role: {
       type: String,
@@ -65,6 +68,7 @@ userRegistrationSchema.statics.isUserExistByUsername = async function (
     username,
   });
 };
+
 userRegistrationSchema.statics.storePassword = async function (
   email: string,
   password: string,
@@ -77,11 +81,10 @@ userRegistrationSchema.statics.storePassword = async function (
     newPasswords.unshift({ password, timestamp });
 
     newPasswords = newPasswords.slice(0, 3);
-
-    await this.findOneAndUpdate({
-      email: user.email,
-      passwordStore: newPasswords,
-    });
+    await this.findOneAndUpdate(
+      { email: user.email },
+      { $set: { passwordStore: newPasswords } },
+    );
   }
 };
 

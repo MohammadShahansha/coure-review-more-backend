@@ -29,9 +29,10 @@ const getBestCourseFromDB = async () => {
       $limit: 1,
     },
   ]);
-  const bestCourse = await Course.findById(bestAvarageRating[0]._id).populate(
-    'createdBy',
-  );
+  const bestCourse = await Course.findById(bestAvarageRating[0]._id).populate({
+    path: 'createdBy',
+    select: '-password -passwordStore',
+  });
   const result = {
     course: bestCourse,
     averageRating: bestAvarageRating[0].averageRating,

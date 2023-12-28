@@ -5,3 +5,7 @@
 - Then I setup tsconfig file and all ts file kept in src and all js file kept in dist fulder.
 - Firstly, in src I created app.ts and server.ts and then created some folder follwing moduler system and created course.interface.ts, course.model.ts, course.zod.validation.ts course.controller.ts, course.services.ts, course.route.ts as well as avobe all of folder created for review and categories etc----------.
 - After codeing I used postman to check my code output
+
+## Here is documentation file:
+
+https://documenter.getpostman.com/view/31389651/2s9YkuYd7H

@@ -60,14 +60,17 @@ const changedPassword = async (
   if (!isPasswordMatch) {
     throw new Error('password not matched');
   }
+
+  //////password store in here-------------
   await UserRegistration.storePassword(user.email, user.password, new Date());
+
   for (const pass of user?.passwordStore || []) {
     const result = await bcrypt.compare(payload.newPassword, pass.password);
-    console.log(result);
     if (result) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Do not use old password');
     }
   }
+
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_round),

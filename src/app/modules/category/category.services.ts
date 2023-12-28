@@ -1,13 +1,15 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { TCategory } from './category.interface';
 import { Category } from './category.model';
+import AppError from '../../errors/appErrors';
+import httpStatus from 'http-status';
 const createCategoryIntoDB = async (
   userInfo: JwtPayload,
   category: TCategory,
 ) => {
   const role = userInfo?.role;
   if (role !== 'admin') {
-    throw new Error('you are not authorized');
+    throw new AppError(httpStatus.BAD_REQUEST, 'you are not authorized');
   }
   const result = await Category.create(category);
   return result;

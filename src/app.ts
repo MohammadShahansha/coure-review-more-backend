@@ -15,8 +15,8 @@ app.use(cors());
 app.use('/api', courseRouter);
 app.use('/api', categoriesRouter);
 app.use('/api', reviewRouter);
-app.use('/auth', userRegistrationRoutes);
-app.use('/auth', userLoginRoutes);
+app.use('/api/auth', userRegistrationRoutes);
+app.use('/api/auth', userLoginRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');

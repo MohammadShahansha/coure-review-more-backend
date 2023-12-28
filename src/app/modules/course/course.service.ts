@@ -21,9 +21,10 @@ const createCourseIntoDB = async (course: TCourse, userInfo: JwtPayload) => {
 };
 
 const getAllCourseFromDB = async (query: any) => {
-  const filterQuery = filter(Course.find(), query)
-    .populate('createdBy')
-    .select('-password');
+  const filterQuery = filter(Course.find(), query).populate({
+    path: 'createdBy',
+    select: '-password -passwordStore',
+  });
   const sortQuery = sort(filterQuery, query);
   const paginateQuery = paginate(sortQuery, query);
   const selectedFieldQuery = field(paginateQuery, query);
@@ -60,13 +61,22 @@ const updateCourseFromDB = async (
   const result = await Course.findByIdAndUpdate(id, modifiedUpdateData, {
     new: true,
     runValidators: true,
-  }).populate('createdBy');
+  }).populate({
+    path: 'createdBy',
+    select: '-password -passwordStore',
+  });
   return result;
 };
 //to get all review and services
 const getAllReviewWithCourseFromDB = async (id: string) => {
-  const course = await Course.findById(id).populate('createdBy');
-  const reviews = await Review.find({ courseId: id }).populate('createdBy');
+  const course = await Course.findById(id).populate({
+    path: 'createdBy',
+    select: '-password -passwordStore',
+  });
+  const reviews = await Review.find({ courseId: id }).populate({
+    path: 'createdBy',
+    select: '-password -passwordStore',
+  });
   const result = {
     course,
     reviews,
