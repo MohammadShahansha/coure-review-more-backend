@@ -9,7 +9,7 @@ const createCategoryIntoDB = async (
 ) => {
   const role = userInfo?.role;
   if (role !== 'admin') {
-    throw new AppError(httpStatus.BAD_REQUEST, 'you are not authorized');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Unauthorized Access');
   }
   const result = await Category.create(category);
   return result;

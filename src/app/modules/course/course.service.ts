@@ -14,7 +14,7 @@ import { JwtPayload } from 'jsonwebtoken';
 const createCourseIntoDB = async (course: TCourse, userInfo: JwtPayload) => {
   const role = userInfo?.role;
   if (role !== 'admin') {
-    throw new Error('you are not authorized');
+    throw new Error('Unauthorized Access');
   }
   const result = await Course.create(course);
   return result;
@@ -39,7 +39,7 @@ const updateCourseFromDB = async (
 ) => {
   const role = userInfo?.role;
   if (role !== 'admin') {
-    throw new Error('you are not auothorize');
+    throw new Error('Unauthorized Access');
   }
   const { tags, details, ...remainingCourseData } = courseData;
   const updateTags = tags ? tags.filter((tag) => !tag.isDeleted) : undefined;

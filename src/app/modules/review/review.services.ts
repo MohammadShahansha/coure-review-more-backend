@@ -6,7 +6,7 @@ import { Review } from './review.model';
 const createReviewIntoDB = async (review: TReview, userInfo: JwtPayload) => {
   const role = userInfo?.role;
   if (role !== 'user') {
-    throw new Error('you are not auothorize');
+    throw new Error('Unauthorized Access');
   }
   const result = await Review.create(review);
   return result;
